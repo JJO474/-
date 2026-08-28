@@ -92,9 +92,37 @@ if (!configReady()) {
       return;
     }
     applyingRemote = true;
-    originalSetItem.call(localStorage, MAIN_STORAGE_KEY, JSON.stringify(remote.data));
-    try {
-      d = remote.data;
+
+const normalizedData = {
+  ...remote.data,
+  names: Array.isArray(remote.data.names)
+    ? remote.data.names
+    : ['쪼치원', '오치원'],
+
+  p: Array.isArray(remote.data.p)
+    ? remote.data.p
+    : [],
+
+  l: Array.isArray(remote.data.l)
+    ? remote.data.l
+    : [],
+
+  bonus: Array.isArray(remote.data.bonus)
+    ? remote.data.bonus
+    : [0, 0],
+
+  master: Number(remote.data.master ?? 36000),
+  masterRun: Boolean(remote.data.masterRun)
+};
+
+originalSetItem.call(
+  localStorage,
+  MAIN_STORAGE_KEY,
+  JSON.stringify(normalizedData)
+);
+
+try {
+  d = normalizedData;
       if (typeof render === 'function') render();
       updateBadge('● 새 데이터 수신', '#246b88');
     } catch (error) {
